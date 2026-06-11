@@ -21,10 +21,20 @@ jobs:
                 cache: true
             - name: Get dependencies
               run: flutter pub get  
-            - name: Build QA APK
+            - name: Build APK
               run: flutter build apk --dart-define=POLA_API_KEY=${{ secrets.POLA_API_KEY }} --build-number=${{ github.run_number }}
             - name: Install Firebase CLI
-              run: npm install -g firebase-tools        
+              run: npm install -g firebase-tools
+            - name: Deploy to Firebase App Distribution
+              env:
+                FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+                FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
+              run: |
+                firebase appdistribution:distribute build/app/outputs/flutter-apk/app.apk \
+                  --app $FIREBASE_APP_ID \
+                  --token $FIREBASE_TOKEN \
+                  --groups "QA-Group" \
+                  --release-notes "Automatyczny build z GitHub Actions - branch: ${{ github.ref }} - commit: ${{ github.sha }}"
             - uses: actions/upload-artifact@v7
               with:
                 name: app-qa-debug.apk
