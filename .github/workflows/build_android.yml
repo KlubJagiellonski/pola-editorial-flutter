@@ -30,7 +30,7 @@ jobs:
                 FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
                 FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
               run: |
-                firebase appdistribution:distribute build/app/outputs/flutter-apk/app.apk \
+                firebase appdistribution:distribute build/app/outputs/flutter-apk/app-release.apk \
                   --app $FIREBASE_APP_ID \
                   --token $FIREBASE_TOKEN \
                   --groups "QA-Group" \
@@ -38,4 +38,4 @@ jobs:
             - uses: actions/upload-artifact@v7
               with:
                 name: app-qa-debug.apk
-                path: build/app/outputs/flutter-apk/app.apk
+                path: build/app/outputs/flutter-apk/app-release.apk
