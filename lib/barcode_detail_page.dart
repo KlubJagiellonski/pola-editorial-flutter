@@ -61,23 +61,15 @@ class _BarcodeDetailPageState extends State<BarcodeDetailPage> {
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
-              Row(
-                children: [
-                  ElevatedButton(
-                    onPressed: _isLoading ? null : () => _setIngredients('PL'),
-                    child: _isLoading 
-                        ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)) 
-                        : const Text('Polskie'),
-                  ),
-                  const SizedBox(width: 16),
-                  ElevatedButton(
-                    onPressed: _isLoading ? null : () => _setIngredients('NPL'),
-                    child: _isLoading 
-                        ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)) 
-                        : const Text('Nie polskie'),
-                  ),
-                ],
-              ),
+              _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : Row(
+                      children: [
+                        _SetIngredientsButton('PL', 'Polskie', onPressed: _setIngredients),
+                        const SizedBox(width: 16),
+                        _SetIngredientsButton('NPL', 'Nie polskie', onPressed: _setIngredients),
+                      ],
+                    ),
               const Divider(height: 32),
               _JsonView(data: widget.data),
             ],
@@ -106,6 +98,22 @@ class _JsonView extends StatelessWidget {
         fontFamily: 'monospace',
         fontSize: 14,
       ),
+    );
+  }
+}
+
+class _SetIngredientsButton extends StatelessWidget {
+  final String code;
+  final String label;
+  final void Function(String) onPressed;
+
+  const _SetIngredientsButton(this.code, this.label, {required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () => onPressed(code),
+      child: Text(label),
     );
   }
 }
