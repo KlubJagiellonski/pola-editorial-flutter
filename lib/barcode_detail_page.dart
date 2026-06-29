@@ -63,11 +63,13 @@ class _BarcodeDetailPageState extends State<BarcodeDetailPage> {
               const SizedBox(height: 8),
               _isLoading
                   ? const Center(child: CircularProgressIndicator())
-                  : Row(
+                  : Wrap(
+                      spacing: 16,
+                      runSpacing: 8,
                       children: [
                         _SetIngredientsButton('PL', 'Polskie', onPressed: _setIngredients),
-                        const SizedBox(width: 16),
                         _SetIngredientsButton('NPL', 'Nie polskie', onPressed: _setIngredients),
+                        _SetIngredientsButton('DW', 'Do weryfikacji', onPressed: _setIngredients),
                       ],
                     ),
               const Divider(height: 32),
