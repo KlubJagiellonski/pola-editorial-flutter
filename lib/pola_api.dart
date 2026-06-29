@@ -23,6 +23,28 @@ class PolaApi {
     }
     return jsonDecode(utf8.decode(response.bodyBytes));
   }
+
+  Future<void> setIngredients(String code, String ingredients) async {
+    const apiKey = String.fromEnvironment('POLA_API_KEY');
+    final uri = Uri.parse('https://www.pola-app.pl/a/v4/set_ingredients');
+    final response = await _client.post(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $apiKey', // Assuming Bearer token
+      },
+      body: jsonEncode({
+        'code': code,
+        'ingredients': ingredients,
+      }),
+    );
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      throw HttpException(
+        'HTTP ${response.statusCode}',
+        response.body,
+      );
+    }
+  }
 }
 
 class HttpException implements Exception {
