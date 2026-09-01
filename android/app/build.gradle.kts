@@ -46,7 +46,7 @@ flutter {
 val generateDebugKeystore =
     tasks.register<Exec>("generateDebugKeystore") {
         val debugKeystore = project.file("debug.keystore")
-        outputs.file(debugKeystore)
+        onlyIf { !debugKeystore.exists() }
         commandLine(
             "keytool",
             "-genkeypair",
