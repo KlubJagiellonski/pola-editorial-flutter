@@ -42,3 +42,34 @@ android {
 flutter {
     source = "../.."
 }
+
+val generateDebugKeystore =
+    tasks.register<Exec>("generateDebugKeystore") {
+        val debugKeystore = project.file("debug.keystore")
+        onlyIf { !debugKeystore.exists() }
+        commandLine(
+            "keytool",
+            "-genkeypair",
+            "-v",
+            "-keystore",
+            debugKeystore.absolutePath,
+            "-storepass",
+            "android",
+            "-alias",
+            "androiddebugkey",
+            "-keypass",
+            "android",
+            "-keyalg",
+            "RSA",
+            "-keysize",
+            "2048",
+            "-validity",
+            "10000",
+            "-dname",
+            "CN=Android Debug,O=Android,C=US",
+        )
+    }
+
+tasks.matching { it.name == "validateSigningRelease" }.configureEach {
+    dependsOn(generateDebugKeystore)
+}
