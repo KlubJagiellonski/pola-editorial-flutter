@@ -1,0 +1,17 @@
+name: Build iOS
+
+on:
+  push:
+  pull_request:
+    
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v6
+    - uses: subosito/flutter-action@v2
+      with:
+        channel: 'stable'
+        cache: true
+    - run: flutter pub get
+    - run: flutter build ios --no-codesign
