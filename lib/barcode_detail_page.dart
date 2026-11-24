@@ -16,6 +16,35 @@ class BarcodeDetailPage extends StatefulWidget {
 class _BarcodeDetailPageState extends State<BarcodeDetailPage> {
   final PolaApi _api = PolaApi();
   bool _isLoading = false;
+  late dynamic _data;
+  String? _ingredients;
+
+  @override
+  void initState() {
+    super.initState();
+    _data = widget.data;
+    _ingredients = _readIngredients(_data);
+  }
+
+  String? _readIngredients(dynamic data) {
+    if (data is Map && data['ingredients'] != null) {
+      return data['ingredients'].toString();
+    }
+    return null;
+  }
+
+  String get _ingredientsLabel {
+    switch (_ingredients) {
+      case 'PL':
+        return 'Polskie';
+      case 'NPL':
+        return 'Nie Polskie';
+      case 'DW':
+        return 'Do weryfikacji';
+      default:
+        return 'Brak danych w bazie';
+    }
+  }
 
   Future<void> _setIngredients(String ingredients) async {
     if (_isLoading) return;
@@ -25,6 +54,13 @@ class _BarcodeDetailPageState extends State<BarcodeDetailPage> {
     try {
       await _api.setIngredients(widget.code, ingredients);
       if (mounted) {
+        setState(() {
+          _ingredients = ingredients;
+          if (_data is Map) {
+            _data = Map<String, dynamic>.from(_data as Map);
+            _data['ingredients'] = ingredients;
+          }
+        });
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Zapisano pomyślnie!')),
         );
@@ -56,9 +92,9 @@ class _BarcodeDetailPageState extends State<BarcodeDetailPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Surowce',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              Text(
+                'Surowce : $_ingredientsLabel',
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
               _isLoading
@@ -73,7 +109,7 @@ class _BarcodeDetailPageState extends State<BarcodeDetailPage> {
                       ],
                     ),
               const Divider(height: 32),
-              _JsonView(data: widget.data),
+              _JsonView(data: _data),
             ],
           ),
         ),
